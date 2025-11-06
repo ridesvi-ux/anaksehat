@@ -179,7 +179,7 @@ class _FormPageState extends State<FormPage> {
                   // Title dengan Image
                   Center(
                     child: Image.asset(
-                      'assets/isiform.png',
+                      'assets/images/isiform.png',
                       height: 60,
                       fit: BoxFit.contain,
                       errorBuilder: (context, error, stackTrace) {
@@ -516,7 +516,7 @@ class ResultPage extends StatelessWidget {
               // Title dengan Image
               Center(
                 child: Image.asset(
-                  'assets/result.png',
+                  'assets/images/result.png',
                   height: 60,
                   fit: BoxFit.contain,
                   errorBuilder: (context, error, stackTrace) {
