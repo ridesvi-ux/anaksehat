@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+// Import HomeScreen - sesuaikan dengan lokasi file HomeScreen lu
+import 'home_screen.dart'; // Ganti nama file sesuai lokasi HomeScreen lu
 
 void main() {
   runApp(const MyApp());
@@ -180,6 +182,16 @@ class _FormPageState extends State<FormPage> {
                       'assets/isiform.png',
                       height: 60,
                       fit: BoxFit.contain,
+                      errorBuilder: (context, error, stackTrace) {
+                        return const Text(
+                          'Isi Form',
+                          style: TextStyle(
+                            fontSize: 24,
+                            fontWeight: FontWeight.bold,
+                            color: Color(0xFF2196F3),
+                          ),
+                        );
+                      },
                     ),
                   ),
 
@@ -507,6 +519,16 @@ class ResultPage extends StatelessWidget {
                   'assets/result.png',
                   height: 60,
                   fit: BoxFit.contain,
+                  errorBuilder: (context, error, stackTrace) {
+                    return const Text(
+                      'Hasil',
+                      style: TextStyle(
+                        fontSize: 24,
+                        fontWeight: FontWeight.bold,
+                        color: Color(0xFF2196F3),
+                      ),
+                    );
+                  },
                 ),
               ),
 
@@ -527,12 +549,24 @@ class ResultPage extends StatelessWidget {
 
               const Spacer(),
 
-              // Button
+              // Button - Navigate ke HomeScreen
               SizedBox(
                 width: double.infinity,
                 child: ElevatedButton(
                   onPressed: () {
-                    Navigator.pop(context);
+                    // CARA 1: Pakai Navigator.pushAndRemoveUntil dengan widget
+                    Navigator.pushAndRemoveUntil(
+                      context,
+                      MaterialPageRoute(builder: (context) => const HomeScreen()),
+                      (route) => false,
+                    );
+                    
+                    // CARA 2: Pakai named route (kalau udah setup di main.dart)
+                    // Navigator.pushNamedAndRemoveUntil(
+                    //   context,
+                    //   '/home',
+                    //   (route) => false,
+                    // );
                   },
                   style: ElevatedButton.styleFrom(
                     backgroundColor: const Color(0xFF2196F3),
