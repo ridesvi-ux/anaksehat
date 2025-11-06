@@ -1,11 +1,72 @@
-import 'package:anak_sehat_proyek/screens/edukasimenu_screen.dart';
-import 'package:anak_sehat_proyek/screens/formandresult_screen.dart';
 import 'package:flutter/material.dart';
-// Gak perlu import karena FormPage ada di file yang sama atau beda
-// Kalau FormPage di file terpisah, import: import 'formandresult.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'dart:convert';
+import 'formandresult_screen.dart';
+import 'edukasimenu_screen.dart';
 
-class HomeScreen extends StatelessWidget {
+class HomeScreen extends StatefulWidget {
   const HomeScreen({Key? key}) : super(key: key);
+
+  @override
+  State<HomeScreen> createState() => _HomeScreenState();
+}
+
+class _HomeScreenState extends State<HomeScreen> {
+  // Data default
+  Map<String, dynamic> _summaryData = {
+    'hasData': false,
+    'nama': '-',
+    'berat': 0.0,
+    'tinggi': 0.0,
+    'usia': 0,
+    'statusGizi': '-',
+    'risikoStunting': '-',
+  };
+
+  @override
+  void initState() {
+    super.initState();
+    _loadSavedData();
+  }
+
+  // FUNGSI BUAT LOAD DATA DARI SHARED PREFERENCES
+  Future<void> _loadSavedData() async {
+    final prefs = await SharedPreferences.getInstance();
+    final savedDataString = prefs.getString('lastCheckupData');
+    
+    if (savedDataString != null) {
+      final savedData = json.decode(savedDataString);
+      setState(() {
+        _summaryData = savedData;
+      });
+    }
+  }
+
+  String _formatUsia(int usiaBulan) {
+    if (usiaBulan == 0) return '-';
+    if (usiaBulan < 12) {
+      return '$usiaBulan Bulan';
+    } else {
+      int tahun = usiaBulan ~/ 12;
+      int bulan = usiaBulan % 12;
+      if (bulan == 0) {
+        return '$tahun Tahun';
+      } else {
+        return '$tahun Tahun $bulan Bulan';
+      }
+    }
+  }
+
+  Color _getStatusColor(String status) {
+    if (status == '-') return Colors.grey;
+    if (status.contains('Normal') || status.contains('Rendah')) {
+      return Colors.green;
+    } else if (status.contains('Sedang')) {
+      return Colors.orange;
+    } else {
+      return Colors.red;
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -50,7 +111,7 @@ class HomeScreen extends StatelessWidget {
                     ),
                     const SizedBox(height: 16),
                     // Smile icon
-                    Container(
+                    SizedBox(
                       width: 60,
                       height: 30,
                       child: CustomPaint(
@@ -89,13 +150,16 @@ class HomeScreen extends StatelessWidget {
                           child: _buildMenuCard(
                             icon: Icons.child_care,
                             title: 'Cek Pertumbuhan\nAnak',
-                            onTap: () {
-                              Navigator.push(
+                            onTap: () async {
+                              // Navigate ke form dan refresh data saat balik
+                              await Navigator.push(
                                 context,
                                 MaterialPageRoute(
                                   builder: (context) => const FormPage(),
                                 ),
                               );
+                              // Reload data setelah balik dari form
+                              _loadSavedData();
                             },
                           ),
                         ),
@@ -130,7 +194,7 @@ class HomeScreen extends StatelessWidget {
                     ),
                     const SizedBox(height: 20),
 
-                    // Summary Card
+                    // Summary Card - TAMPIL DINAMIS
                     Container(
                       width: double.infinity,
                       padding: const EdgeInsets.all(24),
@@ -145,35 +209,43 @@ class HomeScreen extends StatelessWidget {
                           ),
                         ],
                       ),
-                      child: Column(
-                        children: [
-                          _buildSummaryRow(
-                            'Nama Anak',
-                            'Okami Urslan',
-                          ),
-                          const SizedBox(height: 16),
-                          _buildSummaryRow(
-                            'Berat Badan',
-                            '14 Kg',
-                          ),
-                          const SizedBox(height: 16),
-                          _buildSummaryRow(
-                            'Tinggi Badan',
-                            '95 Cm',
-                          ),
-                          const SizedBox(height: 16),
-                          _buildSummaryRow(
-                            'Usia',
-                            '1 Tahun',
-                          ),
-                          const SizedBox(height: 16),
-                          _buildSummaryRow(
-                            'Status Gizi',
-                            'Risiko Stunting Rendah',
-                            isStatus: true,
-                          ),
-                        ],
-                      ),
+                      child: _summaryData['hasData'] == true
+                          ? Column(
+                              children: [
+                                _buildSummaryRow(
+                                  'Nama Anak',
+                                  _summaryData['nama'],
+                                ),
+                                const SizedBox(height: 16),
+                                _buildSummaryRow(
+                                  'Berat Badan',
+                                  '${_summaryData['berat']} Kg',
+                                ),
+                                const SizedBox(height: 16),
+                                _buildSummaryRow(
+                                  'Tinggi Badan',
+                                  '${_summaryData['tinggi']} Cm',
+                                ),
+                                const SizedBox(height: 16),
+                                _buildSummaryRow(
+                                  'Usia',
+                                  _formatUsia(_summaryData['usia']),
+                                ),
+                                const SizedBox(height: 16),
+                                _buildSummaryRow(
+                                  'Status Gizi',
+                                  _summaryData['statusGizi'],
+                                  isStatus: true,
+                                ),
+                                const SizedBox(height: 16),
+                                _buildSummaryRow(
+                                  'Risiko Stunting',
+                                  _summaryData['risikoStunting'],
+                                  isStatus: true,
+                                ),
+                              ],
+                            )
+                          : _buildNoDataWidget(),
                     ),
 
                     const SizedBox(height: 32),
@@ -184,6 +256,64 @@ class HomeScreen extends StatelessWidget {
           ),
         ),
       ),
+    );
+  }
+
+  // WIDGET KALAU BELUM ADA DATA
+  Widget _buildNoDataWidget() {
+    return Column(
+      children: [
+        Icon(
+          Icons.inbox_outlined,
+          size: 80,
+          color: Colors.grey[300],
+        ),
+        const SizedBox(height: 16),
+        Text(
+          'Belum Ada Data',
+          style: TextStyle(
+            fontSize: 18,
+            fontWeight: FontWeight.w600,
+            color: Colors.grey[600],
+          ),
+        ),
+        const SizedBox(height: 8),
+        Text(
+          'Silakan cek pertumbuhan anak\nterlebih dahulu',
+          textAlign: TextAlign.center,
+          style: TextStyle(
+            fontSize: 14,
+            color: Colors.grey[500],
+          ),
+        ),
+        const SizedBox(height: 24),
+        ElevatedButton.icon(
+          onPressed: () async {
+            await Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => const FormPage(),
+              ),
+            );
+            _loadSavedData();
+          },
+          icon: const Icon(Icons.add, color: Colors.white),
+          label: const Text(
+            'Cek Sekarang',
+            style: TextStyle(color: Colors.white),
+          ),
+          style: ElevatedButton.styleFrom(
+            backgroundColor: const Color(0xFF2196F3),
+            padding: const EdgeInsets.symmetric(
+              horizontal: 24,
+              vertical: 12,
+            ),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(12),
+            ),
+          ),
+        ),
+      ],
     );
   }
 
@@ -239,7 +369,7 @@ class HomeScreen extends StatelessWidget {
         SizedBox(
           width: 120,
           child: Text(
-            '$label',
+            label,
             style: const TextStyle(
               fontSize: 16,
               color: Color(0xFF2196F3),
@@ -274,8 +404,8 @@ class HomeScreen extends StatelessWidget {
                   width: 12,
                   height: 12,
                   margin: const EdgeInsets.only(left: 8),
-                  decoration: const BoxDecoration(
-                    color: Colors.green,
+                  decoration: BoxDecoration(
+                    color: _getStatusColor(value),
                     shape: BoxShape.circle,
                   ),
                 ),
@@ -320,43 +450,4 @@ class SmilePainter extends CustomPainter {
 
   @override
   bool shouldRepaint(covariant CustomPainter oldDelegate) => false;
-}
-
-// Screen untuk Edukasi Gizi
-class EdukasiGiziScreen extends StatelessWidget {
-  const EdukasiGiziScreen({Key? key}) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Colors.white,
-      appBar: AppBar(
-        backgroundColor: const Color(0xFF2196F3),
-        elevation: 0,
-        title: const Text('Edukasi Gizi'),
-        centerTitle: true,
-      ),
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Icon(
-              Icons.menu_book,
-              size: 100,
-              color: const Color(0xFF2196F3),
-            ),
-            const SizedBox(height: 24),
-            const Text(
-              'Halaman Edukasi Gizi',
-              style: TextStyle(
-                fontSize: 20,
-                fontWeight: FontWeight.bold,
-                color: Color(0xFF2196F3),
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
 }
