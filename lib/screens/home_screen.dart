@@ -1,4 +1,7 @@
+import 'package:anak_sehat_proyek/screens/formandresult_screen.dart';
 import 'package:flutter/material.dart';
+// Gak perlu import karena FormPage ada di file yang sama atau beda
+// Kalau FormPage di file terpisah, import: import 'formandresult.dart';
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({Key? key}) : super(key: key);
@@ -11,6 +14,7 @@ class HomeScreen extends StatelessWidget {
         child: SingleChildScrollView(
           child: Column(
             children: [
+              // Header biru dengan greeting
               Container(
                 width: double.infinity,
                 padding: const EdgeInsets.symmetric(
@@ -44,14 +48,14 @@ class HomeScreen extends StatelessWidget {
                       ),
                     ),
                     const SizedBox(height: 16),
-                    
+                    // Smile icon
                     Container(
-                      width: 80,
+                      width: 60,
                       height: 30,
                       child: CustomPaint(
                         painter: SmilePainter(
                           color: Colors.white,
-                          curveDepth: 1.0,
+                          curveDepth: 2.0,
                         ),
                       ),
                     ),
@@ -60,7 +64,8 @@ class HomeScreen extends StatelessWidget {
               ),
 
               const SizedBox(height: 32),
- 
+
+              // Fitur Utama
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 24),
                 child: Column(
@@ -75,7 +80,8 @@ class HomeScreen extends StatelessWidget {
                       ),
                     ),
                     const SizedBox(height: 20),
- 
+
+                    // Grid 2 menu
                     Row(
                       children: [
                         Expanded(
@@ -83,7 +89,12 @@ class HomeScreen extends StatelessWidget {
                             icon: Icons.child_care,
                             title: 'Cek Pertumbuhan\nAnak',
                             onTap: () {
-                              print('Navigate to Cek Pertumbuhan');
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => const FormPage(),
+                                ),
+                              );
                             },
                           ),
                         ),
@@ -93,7 +104,12 @@ class HomeScreen extends StatelessWidget {
                             icon: Icons.menu_book,
                             title: 'Edukasi Gizi',
                             onTap: () {
-                              print('Navigate to Edukasi Gizi');
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => const EdukasiGiziScreen(),
+                                ),
+                              );
                             },
                           ),
                         ),
@@ -101,7 +117,8 @@ class HomeScreen extends StatelessWidget {
                     ),
 
                     const SizedBox(height: 32),
- 
+
+                    // Summary
                     const Text(
                       'Summary',
                       style: TextStyle(
@@ -111,7 +128,8 @@ class HomeScreen extends StatelessWidget {
                       ),
                     ),
                     const SizedBox(height: 20),
- 
+
+                    // Summary Card
                     Container(
                       width: double.infinity,
                       padding: const EdgeInsets.all(24),
@@ -301,4 +319,43 @@ class SmilePainter extends CustomPainter {
 
   @override
   bool shouldRepaint(covariant CustomPainter oldDelegate) => false;
+}
+
+// Screen untuk Edukasi Gizi
+class EdukasiGiziScreen extends StatelessWidget {
+  const EdukasiGiziScreen({Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: Colors.white,
+      appBar: AppBar(
+        backgroundColor: const Color(0xFF2196F3),
+        elevation: 0,
+        title: const Text('Edukasi Gizi'),
+        centerTitle: true,
+      ),
+      body: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(
+              Icons.menu_book,
+              size: 100,
+              color: const Color(0xFF2196F3),
+            ),
+            const SizedBox(height: 24),
+            const Text(
+              'Halaman Edukasi Gizi',
+              style: TextStyle(
+                fontSize: 20,
+                fontWeight: FontWeight.bold,
+                color: Color(0xFF2196F3),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
 }
