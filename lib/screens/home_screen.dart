@@ -1,3 +1,4 @@
+import 'package:anak_sehat_proyek/screens/edukasimenu_screen.dart';
 import 'package:anak_sehat_proyek/screens/formandresult_screen.dart';
 import 'package:flutter/material.dart';
 // Gak perlu import karena FormPage ada di file yang sama atau beda
@@ -107,7 +108,7 @@ class HomeScreen extends StatelessWidget {
                               Navigator.push(
                                 context,
                                 MaterialPageRoute(
-                                  builder: (context) => const EdukasiGiziScreen(),
+                                  builder: (context) => const EdukasiPage(),
                                 ),
                               );
                             },
