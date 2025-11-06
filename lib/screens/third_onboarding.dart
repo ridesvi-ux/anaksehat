@@ -1,3 +1,4 @@
+import 'package:anak_sehat_proyek/screens/home_screen.dart';
 import 'package:anak_sehat_proyek/screens/welcome_screen.dart';
 import 'package:flutter/material.dart';
 
@@ -132,7 +133,7 @@ class ThirdOnboarding extends StatelessWidget {
                           PageRouteBuilder(
                             pageBuilder:
                                 (context, animation, secondaryAnimation) =>
-                                    WelcomeScreen(),
+                                    HomeScreen(),
                             transitionsBuilder:
                                 (
                                   context,
