@@ -1,8 +1,7 @@
-import 'package:anak_sehat_proyek/screens/onboarding_screen.dart';
 import 'package:flutter/material.dart';
 
-class WelcomeScreen extends StatelessWidget {
-  const WelcomeScreen({Key? key}) : super(key: key);
+class Onboarding_screen extends StatelessWidget {
+  const Onboarding_screen({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -28,19 +27,19 @@ class WelcomeScreen extends StatelessWidget {
               // Garis melengkung bawah logo (smile) + titik
               Container(
                 width: 80,
-                height: 20, // Naikin tinggi biar lengkungan keliatan
+                height: 20,
                 margin: const EdgeInsets.only(top: 1),
                 child: CustomPaint(
                   painter: SmilePainter(
-                    curveDepth: 2.5, // ATUR LENGKUNGAN DI SINI
-                    dotSize: 3.0, // ATUR UKURAN TITIK DI SINI
+                    curveDepth: 2.5,
+                    dotSize: 3.0,
                   ),
                 ),
               ),
 
               const Spacer(),
 
-              // Gambar ilustrasi family
+              // Gambar ilustrasi anak-anak dengan penggaris
               Container(
                 height: 300,
                 width: double.infinity,
@@ -48,9 +47,8 @@ class WelcomeScreen extends StatelessWidget {
                   borderRadius: BorderRadius.circular(20),
                 ),
                 child: Image.asset(
-                  'assets/images/1.png',
+                  'assets/images/2.png',
                   fit: BoxFit.contain,
-                  // Kalo gambarnya belum ada, ganti pake placeholder
                   errorBuilder: (context, error, stackTrace) {
                     return Container(
                       decoration: BoxDecoration(
@@ -58,7 +56,7 @@ class WelcomeScreen extends StatelessWidget {
                         borderRadius: BorderRadius.circular(20),
                       ),
                       child: const Icon(
-                        Icons.family_restroom,
+                        Icons.height,
                         size: 120,
                         color: Colors.grey,
                       ),
@@ -69,11 +67,11 @@ class WelcomeScreen extends StatelessWidget {
 
               const SizedBox(height: 40),
 
-              // Text Selamat Datang!
+              // Text Cek Pertumbuhan Anak
               const Align(
                 alignment: Alignment.centerLeft,
                 child: Text(
-                  'Selamat Datang!',
+                  'Cek Pertumbuhan Anak',
                   style: TextStyle(
                     fontSize: 32,
                     fontWeight: FontWeight.bold,
@@ -86,7 +84,7 @@ class WelcomeScreen extends StatelessWidget {
 
               // Deskripsi
               const Text(
-                'Selamat datang Orang tua Hebat di aplikasi untuk membantu orang tua memantau tumbuh kembang anak dan mencegah stunting sejak dini.',
+                'Masukkan data anak seperti umur, tinggi, dan berat badan untuk kami bantu analisis apakah pertumbuhannya sudah sesuai.',
                 style: TextStyle(
                   fontSize: 16,
                   color: Color(0xFF2196F3),
@@ -96,12 +94,13 @@ class WelcomeScreen extends StatelessWidget {
 
               const Spacer(),
 
-              // Tombol Lewati
+              // Tombol bawah (Back dan Next)
               Padding(
                 padding: const EdgeInsets.only(bottom: 32.0),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
+                    // Tombol Lewati di kiri
                     const Text(
                       'Lewati',
                       style: TextStyle(
@@ -110,34 +109,38 @@ class WelcomeScreen extends StatelessWidget {
                         fontWeight: FontWeight.w500,
                       ),
                     ),
-                    FloatingActionButton(
-                      onPressed: () {
-                        Navigator.push(
-                          context,
-                          PageRouteBuilder(
-                            pageBuilder:
-                                (context, animation, secondaryAnimation) =>
-                                    Onboarding_screen(),
-                            transitionsBuilder:
-                                (
-                                  context,
-                                  animation,
-                                  secondaryAnimation,
-                                  child,
-                                ) {
-                                  return FadeTransition(
-                                    opacity: animation,
-                                    child: child,
-                                  );
-                                },
+
+                    // Row buat Back & Next
+                    Row(
+                      children: [
+                        // Tombol Back (sama bentuknya kayak Next)
+                        FloatingActionButton(
+                          heroTag: 'back_btn',
+                          backgroundColor: const Color(0xFF2196F3),
+                          onPressed: () {
+                            Navigator.pop(context);
+                          },
+                          child: const Icon(
+                            Icons.arrow_back,
+                            color: Colors.white,
                           ),
-                        );
-                      },
-                      backgroundColor: const Color(0xFF2196F3),
-                      child: const Icon(
-                        Icons.arrow_forward,
-                        color: Colors.white,
-                      ),
+                        ),
+                        const SizedBox(width: 12),
+
+                        // Tombol Next
+                        FloatingActionButton(
+                          heroTag: 'next_btn',
+                          backgroundColor: const Color(0xFF2196F3),
+                          onPressed: () {
+                            print('Next button pressed!');
+                            // TODO: Navigasi ke halaman berikutnya
+                          },
+                          child: const Icon(
+                            Icons.arrow_forward,
+                            color: Colors.white,
+                          ),
+                        ),
+                      ],
                     ),
                   ],
                 ),
@@ -152,14 +155,16 @@ class WelcomeScreen extends StatelessWidget {
 
 // Custom painter buat garis smile di bawah logo
 class SmilePainter extends CustomPainter {
-  final double curveDepth; // Kedalaman lengkungan
-  final double dotSize; // Ukuran titik
+  final double curveDepth;
+  final double dotSize;
 
-  const SmilePainter({this.curveDepth = 2, this.dotSize = 3.0});
+  const SmilePainter({
+    this.curveDepth = 1.5,
+    this.dotSize = 3.0,
+  });
 
   @override
   void paint(Canvas canvas, Size size) {
-    // Gambar garis lengkung
     final paint = Paint()
       ..color = const Color(0xFF2196F3)
       ..strokeWidth = 3
@@ -169,27 +174,24 @@ class SmilePainter extends CustomPainter {
     path.moveTo(0, 0);
 
     path.quadraticBezierTo(
-      size.width / 2, // Titik kontrol X (tengah)
-      size.height * curveDepth, // Titik kontrol Y (kedalaman)
-      size.width, // Titik akhir X (kanan)
-      0, // Titik akhir Y (atas)
+      size.width / 2,
+      size.height * curveDepth,
+      size.width,
+      0,
     );
 
     canvas.drawPath(path, paint);
 
-    // Gambar titik di tengah lengkungan
     final dotPaint = Paint()
       ..color = const Color(0xFF2196F3)
       ..style = PaintingStyle.fill;
 
-    // Hitung posisi titik di tengah kurva
     final dotX = size.width / 2;
-    final dotY = size.height * curveDepth * 0.2; // 75% dari kedalaman
+    final dotY = size.height * curveDepth * 0.2;
 
-    // Gambar lingkaran kecil
     canvas.drawCircle(
       Offset(dotX, dotY),
-      dotSize, // Ukuran titik
+      dotSize,
       dotPaint,
     );
   }
