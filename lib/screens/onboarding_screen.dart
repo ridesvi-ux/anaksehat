@@ -1,5 +1,7 @@
 import 'package:anak_sehat_proyek/screens/third_onboarding.dart';
 import 'package:flutter/material.dart';
+import 'package:anak_sehat_proyek/screens/home_screen.dart';
+
 
 class Onboarding_screen extends StatelessWidget {
   const Onboarding_screen({Key? key}) : super(key: key);
@@ -95,15 +97,23 @@ class Onboarding_screen extends StatelessWidget {
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    // Tombol Lewati di kiri
-                    const Text(
-                      'Lewati',
-                      style: TextStyle(
-                        fontSize: 18,
-                        color: Color(0xFF2196F3),
-                        fontWeight: FontWeight.w500,
-                      ),
-                    ),
+                   GestureDetector(
+  onTap: () {
+    Navigator.pushReplacement(
+      context,
+      MaterialPageRoute(builder: (context) => const HomeScreen()),
+    );
+  },
+  child: const Text(
+    'Lewati',
+    style: TextStyle(
+      fontSize: 18,
+      color: Color(0xFF2196F3),
+      fontWeight: FontWeight.w500,
+    ),
+  ),
+),
+ 
  
                     Row(
                       children: [ 

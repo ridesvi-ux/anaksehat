@@ -14,7 +14,6 @@ class ThirdOnboarding extends StatelessWidget {
           padding: const EdgeInsets.symmetric(horizontal: 24.0),
           child: Column(
             children: [
-          
               const SizedBox(height: 40),
               const Text(
                 'SehatAnak',
@@ -26,22 +25,17 @@ class ThirdOnboarding extends StatelessWidget {
                 ),
               ),
 
-              
               Container(
                 width: 80,
                 height: 20,
                 margin: const EdgeInsets.only(top: 1),
                 child: CustomPaint(
-                  painter: SmilePainter(
-                    curveDepth: 2.5,
-                    dotSize: 3.0,
-                  ),
+                  painter: SmilePainter(curveDepth: 2.5, dotSize: 3.0),
                 ),
               ),
 
               const Spacer(),
 
-             
               Container(
                 height: 300,
                 width: double.infinity,
@@ -83,7 +77,6 @@ class ThirdOnboarding extends StatelessWidget {
 
               const SizedBox(height: 16),
 
-          
               const Text(
                 'Temukan artikel dan tips menarik tentang gizi, pola makan, dan cara pencegahan stunting.',
                 style: TextStyle(
@@ -100,12 +93,22 @@ class ThirdOnboarding extends StatelessWidget {
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    const Text(
-                      'Lewati',
-                      style: TextStyle(
-                        fontSize: 18,
-                        color: Color(0xFF2196F3),
-                        fontWeight: FontWeight.w500,
+                    GestureDetector(
+                      onTap: () {
+                        Navigator.pushReplacement(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => const HomeScreen(),
+                          ),
+                        );
+                      },
+                      child: const Text(
+                        'Lewati',
+                        style: TextStyle(
+                          fontSize: 18,
+                          color: Color(0xFF2196F3),
+                          fontWeight: FontWeight.w500,
+                        ),
                       ),
                     ),
 
@@ -129,25 +132,25 @@ class ThirdOnboarding extends StatelessWidget {
                           backgroundColor: const Color(0xFF2196F3),
                           onPressed: () {
                             Navigator.push(
-                          context,
-                          PageRouteBuilder(
-                            pageBuilder:
-                                (context, animation, secondaryAnimation) =>
-                                    HomeScreen(),
-                            transitionsBuilder:
-                                (
-                                  context,
-                                  animation,
-                                  secondaryAnimation,
-                                  child,
-                                ) {
-                                  return FadeTransition(
-                                    opacity: animation,
-                                    child: child,
-                                  );
-                                },
-                          ),
-                        );
+                              context,
+                              PageRouteBuilder(
+                                pageBuilder:
+                                    (context, animation, secondaryAnimation) =>
+                                        HomeScreen(),
+                                transitionsBuilder:
+                                    (
+                                      context,
+                                      animation,
+                                      secondaryAnimation,
+                                      child,
+                                    ) {
+                                      return FadeTransition(
+                                        opacity: animation,
+                                        child: child,
+                                      );
+                                    },
+                              ),
+                            );
                           },
                           child: const Icon(
                             Icons.arrow_forward,
@@ -171,10 +174,7 @@ class SmilePainter extends CustomPainter {
   final double curveDepth;
   final double dotSize;
 
-  const SmilePainter({
-    this.curveDepth = 1.5,
-    this.dotSize = 3.0,
-  });
+  const SmilePainter({this.curveDepth = 1.5, this.dotSize = 3.0});
 
   @override
   void paint(Canvas canvas, Size size) {
@@ -202,11 +202,7 @@ class SmilePainter extends CustomPainter {
     final dotX = size.width / 2;
     final dotY = size.height * curveDepth * 0.2;
 
-    canvas.drawCircle(
-      Offset(dotX, dotY),
-      dotSize,
-      dotPaint,
-    );
+    canvas.drawCircle(Offset(dotX, dotY), dotSize, dotPaint);
   }
 
   @override

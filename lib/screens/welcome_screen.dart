@@ -1,5 +1,7 @@
 import 'package:anak_sehat_proyek/screens/onboarding_screen.dart';
 import 'package:flutter/material.dart';
+import 'package:anak_sehat_proyek/screens/home_screen.dart';
+
 
 class WelcomeScreen extends StatelessWidget {
   const WelcomeScreen({Key? key}) : super(key: key);
@@ -96,14 +98,22 @@ class WelcomeScreen extends StatelessWidget {
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    const Text(
-                      'Lewati',
-                      style: TextStyle(
-                        fontSize: 18,
-                        color: Color(0xFF2196F3),
-                        fontWeight: FontWeight.w500,
-                      ),
-                    ),
+                    GestureDetector(
+  onTap: () {
+    Navigator.pushReplacement(
+      context,
+      MaterialPageRoute(builder: (context) => const HomeScreen()),
+    );
+  },
+  child: const Text(
+    'Lewati',
+    style: TextStyle(
+      fontSize: 18,
+      color: Color(0xFF2196F3),
+      fontWeight: FontWeight.w500,
+    ),
+  ),
+),
                     FloatingActionButton(
                       onPressed: () {
                         Navigator.push(
