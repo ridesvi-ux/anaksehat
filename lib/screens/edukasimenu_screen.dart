@@ -15,32 +15,13 @@ class EdukasiPage extends StatelessWidget {
       body: Column(
         children: [
           const SizedBox(height: 20),
-          // Header Edukasi dengan smile
-          Column(
-            children: [
-              const Text(
-                'Edukasi',
-                style: TextStyle(
-                  fontSize: 32,
-                  fontWeight: FontWeight.bold,
-                  color: Color(0xFF1E88E5),
-                ),
-              ),
-              const SizedBox(height: 8),
-              Container(
-                width: 60,
-                height: 4,
-                decoration: BoxDecoration(
-                  color: const Color(0xFF1E88E5),
-                  borderRadius: BorderRadius.circular(2),
-                ),
-              ),
-              const SizedBox(height: 4),
-              CustomPaint(
-                size: const Size(60, 20),
-                painter: SmilePainter(),
-              ),
-            ],
+          // Header Edukasi dengan gambar PNG
+          Center(
+            child: Image.asset(
+              'assets/images/edukasi.png',
+              width: 100,
+              fit: BoxFit.contain,
+            ),
           ),
           const SizedBox(height: 40),
           Expanded(
@@ -127,30 +108,4 @@ class EdukasiPage extends StatelessWidget {
       ),
     );
   }
-}
-
-// Custom painter untuk smile di bawah Edukasi
-class SmilePainter extends CustomPainter {
-  @override
-  void paint(Canvas canvas, Size size) {
-    final paint = Paint()
-      ..color = const Color(0xFF1E88E5)
-      ..style = PaintingStyle.stroke
-      ..strokeWidth = 3
-      ..strokeCap = StrokeCap.round;
-
-    final path = Path();
-    path.moveTo(size.width * 0.2, size.height * 0.3);
-    path.quadraticBezierTo(
-      size.width * 0.5,
-      size.height * 0.8,
-      size.width * 0.8,
-      size.height * 0.3,
-    );
-
-    canvas.drawPath(path, paint);
-  }
-
-  @override
-  bool shouldRepaint(covariant CustomPainter oldDelegate) => false;
 }
