@@ -12,8 +12,7 @@ class WelcomeScreen extends StatelessWidget {
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 24.0),
           child: Column(
-            children: [
-              // Logo di atas
+            children: [ 
               const SizedBox(height: 40),
               const Text(
                 'SehatAnak',
@@ -24,23 +23,21 @@ class WelcomeScreen extends StatelessWidget {
                   letterSpacing: 0.5,
                 ),
               ),
-
-              // Garis melengkung bawah logo (smile) + titik
+ 
               Container(
                 width: 80,
-                height: 20, // Naikin tinggi biar lengkungan keliatan
+                height: 20,  
                 margin: const EdgeInsets.only(top: 1),
                 child: CustomPaint(
                   painter: SmilePainter(
-                    curveDepth: 2.5, // ATUR LENGKUNGAN DI SINI
-                    dotSize: 3.0, // ATUR UKURAN TITIK DI SINI
+                    curveDepth: 2.5,  
+                    dotSize: 3.0, 
                   ),
                 ),
               ),
 
               const Spacer(),
-
-              // Gambar ilustrasi family
+ 
               Container(
                 height: 300,
                 width: double.infinity,
@@ -50,7 +47,7 @@ class WelcomeScreen extends StatelessWidget {
                 child: Image.asset(
                   'assets/images/1.png',
                   fit: BoxFit.contain,
-                  // Kalo gambarnya belum ada, ganti pake placeholder
+               
                   errorBuilder: (context, error, stackTrace) {
                     return Container(
                       decoration: BoxDecoration(
@@ -68,8 +65,7 @@ class WelcomeScreen extends StatelessWidget {
               ),
 
               const SizedBox(height: 40),
-
-              // Text Selamat Datang!
+ 
               const Align(
                 alignment: Alignment.centerLeft,
                 child: Text(
@@ -83,8 +79,7 @@ class WelcomeScreen extends StatelessWidget {
               ),
 
               const SizedBox(height: 16),
-
-              // Deskripsi
+ 
               const Text(
                 'Selamat datang Orang tua Hebat di aplikasi untuk membantu orang tua memantau tumbuh kembang anak dan mencegah stunting sejak dini.',
                 style: TextStyle(
@@ -95,8 +90,7 @@ class WelcomeScreen extends StatelessWidget {
               ),
 
               const Spacer(),
-
-              // Tombol Lewati
+ 
               Padding(
                 padding: const EdgeInsets.only(bottom: 32.0),
                 child: Row(
@@ -149,17 +143,16 @@ class WelcomeScreen extends StatelessWidget {
     );
   }
 }
-
-// Custom painter buat garis smile di bawah logo
+ 
 class SmilePainter extends CustomPainter {
-  final double curveDepth; // Kedalaman lengkungan
-  final double dotSize; // Ukuran titik
+  final double curveDepth;  
+  final double dotSize;  
 
   const SmilePainter({this.curveDepth = 2, this.dotSize = 3.0});
 
   @override
   void paint(Canvas canvas, Size size) {
-    // Gambar garis lengkung
+    
     final paint = Paint()
       ..color = const Color(0xFF2196F3)
       ..strokeWidth = 3
@@ -169,27 +162,24 @@ class SmilePainter extends CustomPainter {
     path.moveTo(0, 0);
 
     path.quadraticBezierTo(
-      size.width / 2, // Titik kontrol X (tengah)
-      size.height * curveDepth, // Titik kontrol Y (kedalaman)
-      size.width, // Titik akhir X (kanan)
-      0, // Titik akhir Y (atas)
+      size.width / 2,  
+      size.height * curveDepth,  
+      size.width,  
+      0, 
     );
 
     canvas.drawPath(path, paint);
-
-    // Gambar titik di tengah lengkungan
+ 
     final dotPaint = Paint()
       ..color = const Color(0xFF2196F3)
       ..style = PaintingStyle.fill;
-
-    // Hitung posisi titik di tengah kurva
+ 
     final dotX = size.width / 2;
-    final dotY = size.height * curveDepth * 0.2; // 75% dari kedalaman
-
-    // Gambar lingkaran kecil
+    final dotY = size.height * curveDepth * 0.2;
+ 
     canvas.drawCircle(
       Offset(dotX, dotY),
-      dotSize, // Ukuran titik
+      dotSize,  
       dotPaint,
     );
   }

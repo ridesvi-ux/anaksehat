@@ -1,8 +1,8 @@
-import 'package:anak_sehat_proyek/screens/third_onboarding.dart';
+import 'package:anak_sehat_proyek/screens/welcome_screen.dart';
 import 'package:flutter/material.dart';
 
-class Onboarding_screen extends StatelessWidget {
-  const Onboarding_screen({Key? key}) : super(key: key);
+class ThirdOnboarding extends StatelessWidget {
+  const ThirdOnboarding({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -13,7 +13,7 @@ class Onboarding_screen extends StatelessWidget {
           padding: const EdgeInsets.symmetric(horizontal: 24.0),
           child: Column(
             children: [
-              // Logo di atas
+          
               const SizedBox(height: 40),
               const Text(
                 'SehatAnak',
@@ -24,7 +24,8 @@ class Onboarding_screen extends StatelessWidget {
                   letterSpacing: 0.5,
                 ),
               ),
- 
+
+              
               Container(
                 width: 80,
                 height: 20,
@@ -38,7 +39,8 @@ class Onboarding_screen extends StatelessWidget {
               ),
 
               const Spacer(),
- 
+
+             
               Container(
                 height: 300,
                 width: double.infinity,
@@ -46,7 +48,7 @@ class Onboarding_screen extends StatelessWidget {
                   borderRadius: BorderRadius.circular(20),
                 ),
                 child: Image.asset(
-                  'assets/images/2.png',
+                  'assets/images/3.png',
                   fit: BoxFit.contain,
                   errorBuilder: (context, error, stackTrace) {
                     return Container(
@@ -55,7 +57,7 @@ class Onboarding_screen extends StatelessWidget {
                         borderRadius: BorderRadius.circular(20),
                       ),
                       child: const Icon(
-                        Icons.height,
+                        Icons.restaurant,
                         size: 120,
                         color: Colors.grey,
                       ),
@@ -65,11 +67,11 @@ class Onboarding_screen extends StatelessWidget {
               ),
 
               const SizedBox(height: 40),
- 
+
               const Align(
                 alignment: Alignment.centerLeft,
                 child: Text(
-                  'Cek Pertumbuhan Anak',
+                  'Belajar Sambil Peduli',
                   style: TextStyle(
                     fontSize: 32,
                     fontWeight: FontWeight.bold,
@@ -79,9 +81,10 @@ class Onboarding_screen extends StatelessWidget {
               ),
 
               const SizedBox(height: 16),
- 
+
+          
               const Text(
-                'Masukkan data anak seperti umur, tinggi, dan berat badan untuk kami bantu analisis apakah pertumbuhannya sudah sesuai.',
+                'Temukan artikel dan tips menarik tentang gizi, pola makan, dan cara pencegahan stunting.',
                 style: TextStyle(
                   fontSize: 16,
                   color: Color(0xFF2196F3),
@@ -89,13 +92,13 @@ class Onboarding_screen extends StatelessWidget {
                 ),
               ),
 
-              const Spacer(), 
+              const Spacer(),
+
               Padding(
                 padding: const EdgeInsets.only(bottom: 32.0),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    // Tombol Lewati di kiri
                     const Text(
                       'Lewati',
                       style: TextStyle(
@@ -104,9 +107,9 @@ class Onboarding_screen extends StatelessWidget {
                         fontWeight: FontWeight.w500,
                       ),
                     ),
- 
+
                     Row(
-                      children: [ 
+                      children: [
                         FloatingActionButton(
                           heroTag: 'back_btn',
                           backgroundColor: const Color(0xFF2196F3),
@@ -119,7 +122,7 @@ class Onboarding_screen extends StatelessWidget {
                           ),
                         ),
                         const SizedBox(width: 12),
- 
+
                         FloatingActionButton(
                           heroTag: 'next_btn',
                           backgroundColor: const Color(0xFF2196F3),
@@ -129,7 +132,7 @@ class Onboarding_screen extends StatelessWidget {
                           PageRouteBuilder(
                             pageBuilder:
                                 (context, animation, secondaryAnimation) =>
-                                    ThirdOnboarding(),
+                                    WelcomeScreen(),
                             transitionsBuilder:
                                 (
                                   context,
@@ -161,7 +164,8 @@ class Onboarding_screen extends StatelessWidget {
       ),
     );
   }
-} 
+}
+
 class SmilePainter extends CustomPainter {
   final double curveDepth;
   final double dotSize;
