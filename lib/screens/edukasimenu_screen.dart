@@ -1,3 +1,6 @@
+import 'package:anak_sehat_proyek/screens/edukasi_one.dart';
+import 'package:anak_sehat_proyek/screens/edukasi_there.dart';
+import 'package:anak_sehat_proyek/screens/edukasi_two.dart';
 import 'package:flutter/material.dart';
 
 class EdukasiPage extends StatelessWidget {
@@ -32,7 +35,12 @@ class EdukasiPage extends StatelessWidget {
                   // Button Apa itu Stunting
                   GestureDetector(
                     onTap: () {
-                      // Action untuk Apa itu Stunting
+                     Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => const StuntingInfoPage(),
+                                ),
+                              );
                     },
                     child: ClipRRect(
                       borderRadius: BorderRadius.circular(20),
@@ -47,7 +55,12 @@ class EdukasiPage extends StatelessWidget {
                   // Button Tips Mencegah Stunting
                   GestureDetector(
                     onTap: () {
-                      // Action untuk Tips Mencegah Stunting
+                     Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => const TipsMencegahStuntingPage(),
+                                ),
+                              );
                     },
                     child: ClipRRect(
                       borderRadius: BorderRadius.circular(20),
@@ -62,7 +75,12 @@ class EdukasiPage extends StatelessWidget {
                   // Button Nutrisi & Gizi Anak
                   GestureDetector(
                     onTap: () {
-                      // Action untuk Nutrisi & Gizi Anak
+                     Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => const NutrisiGiziAnakPage(),
+                                ),
+                              );
                     },
                     child: ClipRRect(
                       borderRadius: BorderRadius.circular(20),
