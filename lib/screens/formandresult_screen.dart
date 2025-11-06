@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
-// Import HomeScreen - sesuaikan dengan lokasi file HomeScreen lu
-import 'home_screen.dart'; // Ganti nama file sesuai lokasi HomeScreen lu
+import 'package:shared_preferences/shared_preferences.dart';
+import 'dart:convert';
+import 'home_screen.dart';
 
 void main() {
   runApp(const MyApp());
@@ -14,10 +15,7 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'SehatAnak',
       debugShowCheckedModeBanner: false,
-      theme: ThemeData(
-        primarySwatch: Colors.blue,
-        fontFamily: 'Inter',
-      ),
+      theme: ThemeData(primarySwatch: Colors.blue, fontFamily: 'Inter'),
       home: const FormPage(),
     );
   }
@@ -36,13 +34,12 @@ class _FormPageState extends State<FormPage> {
   final _beratController = TextEditingController();
   final _tinggiController = TextEditingController();
   final _usiaController = TextEditingController();
-  
+
   bool _isFormComplete = false;
 
   @override
   void initState() {
     super.initState();
-    // Tambahkan listener ke setiap controller
     _namaController.addListener(_checkFormComplete);
     _beratController.addListener(_checkFormComplete);
     _tinggiController.addListener(_checkFormComplete);
@@ -51,7 +48,8 @@ class _FormPageState extends State<FormPage> {
 
   void _checkFormComplete() {
     setState(() {
-      _isFormComplete = _namaController.text.isNotEmpty &&
+      _isFormComplete =
+          _namaController.text.isNotEmpty &&
           _beratController.text.isNotEmpty &&
           _tinggiController.text.isNotEmpty &&
           _usiaController.text.isNotEmpty;
@@ -67,16 +65,24 @@ class _FormPageState extends State<FormPage> {
     super.dispose();
   }
 
-  void _submitForm() {
+  Future<void> _submitForm() async {
     if (_formKey.currentState!.validate()) {
-      // Ambil data dari form
       String nama = _namaController.text;
       double berat = double.parse(_beratController.text);
       double tinggi = double.parse(_tinggiController.text);
       int usia = int.parse(_usiaController.text);
 
-      // Hitung status gizi dan risiko stunting
       Map<String, dynamic> result = _hitungStatusGizi(berat, tinggi, usia);
+
+      // SIMPAN DATA KE SHARED PREFERENCES
+      await _saveDataToStorage(
+        nama: nama,
+        berat: berat,
+        tinggi: tinggi,
+        usia: usia,
+        statusGizi: result['statusGizi'],
+        risikoStunting: result['risikoStunting'],
+      );
 
       // Navigate ke halaman result
       Navigator.push(
@@ -95,41 +101,54 @@ class _FormPageState extends State<FormPage> {
     }
   }
 
-  Map<String, dynamic> _hitungStatusGizi(
-      double berat, double tinggi, int usia) {
-    // Rumus sederhana berdasarkan standar WHO
-    // BB/U (Berat Badan menurut Umur)
-    // TB/U (Tinggi Badan menurut Umur)
+  // FUNGSI BUAT NYIMPEN DATA
+  Future<void> _saveDataToStorage({
+    required String nama,
+    required double berat,
+    required double tinggi,
+    required int usia,
+    required String statusGizi,
+    required String risikoStunting,
+  }) async {
+    final prefs = await SharedPreferences.getInstance();
 
+    Map<String, dynamic> data = {
+      'nama': nama,
+      'berat': berat,
+      'tinggi': tinggi,
+      'usia': usia,
+      'statusGizi': statusGizi,
+      'risikoStunting': risikoStunting,
+      'hasData': true,
+    };
+
+    await prefs.setString('lastCheckupData', json.encode(data));
+  }
+
+  Map<String, dynamic> _hitungStatusGizi(
+    double berat,
+    double tinggi,
+    int usia,
+  ) {
     String statusGizi = '';
     String risikoStunting = '';
 
-    // Standar TB/U untuk anak (simplified)
-    // Usia dalam bulan, tinggi dalam cm
     double tinggiStandar = 0;
-    
+
     if (usia <= 12) {
-      // 0-12 bulan
-      tinggiStandar = 70 + (usia * 2.5); // Rata-rata pertumbuhan
+      tinggiStandar = 70 + (usia * 2.5);
     } else if (usia <= 24) {
-      // 13-24 bulan
       tinggiStandar = 75 + ((usia - 12) * 1.5);
     } else if (usia <= 60) {
-      // 25-60 bulan (2-5 tahun)
       tinggiStandar = 85 + ((usia - 24) * 0.8);
     } else {
-      // > 5 tahun
       tinggiStandar = 110 + ((usia - 60) * 0.5);
     }
 
-    // Hitung persentase tinggi terhadap standar
     double persentaseTinggi = (tinggi / tinggiStandar) * 100;
-
-    // Standar BB menurut tinggi (simplified)
     double beratIdeal = (tinggi - 100) * 0.9;
     double persentaseBerat = (berat / beratIdeal) * 100;
 
-    // Tentukan Status Gizi
     if (persentaseBerat >= 110) {
       statusGizi = 'Obesitas';
     } else if (persentaseBerat >= 90) {
@@ -140,7 +159,6 @@ class _FormPageState extends State<FormPage> {
       statusGizi = 'Gizi Buruk';
     }
 
-    // Tentukan Risiko Stunting berdasarkan TB/U
     if (persentaseTinggi >= 95) {
       risikoStunting = 'Risiko Stunting Rendah';
     } else if (persentaseTinggi >= 85) {
@@ -149,10 +167,7 @@ class _FormPageState extends State<FormPage> {
       risikoStunting = 'Risiko Stunting Tinggi';
     }
 
-    return {
-      'statusGizi': statusGizi,
-      'risikoStunting': risikoStunting,
-    };
+    return {'statusGizi': statusGizi, 'risikoStunting': risikoStunting};
   }
 
   @override
@@ -176,10 +191,9 @@ class _FormPageState extends State<FormPage> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  // Title dengan Image
                   Center(
                     child: Image.asset(
-                      'assets/images/isiform.png',
+                      'assets/isiform.png',
                       height: 60,
                       fit: BoxFit.contain,
                       errorBuilder: (context, error, stackTrace) {
@@ -194,10 +208,7 @@ class _FormPageState extends State<FormPage> {
                       },
                     ),
                   ),
-
                   const SizedBox(height: 40),
-
-                  // Nama Anak
                   const Text(
                     'Nama Anak',
                     style: TextStyle(
@@ -250,10 +261,7 @@ class _FormPageState extends State<FormPage> {
                       return null;
                     },
                   ),
-
                   const SizedBox(height: 24),
-
-                  // Berat Badan
                   const Text(
                     'Berat Badan',
                     style: TextStyle(
@@ -310,10 +318,7 @@ class _FormPageState extends State<FormPage> {
                       return null;
                     },
                   ),
-
                   const SizedBox(height: 24),
-
-                  // Tinggi Badan
                   const Text(
                     'Tinggi Badan',
                     style: TextStyle(
@@ -370,10 +375,7 @@ class _FormPageState extends State<FormPage> {
                       return null;
                     },
                   ),
-
                   const SizedBox(height: 24),
-
-                  // Usia
                   const Text(
                     'Usia',
                     style: TextStyle(
@@ -430,18 +432,15 @@ class _FormPageState extends State<FormPage> {
                       return null;
                     },
                   ),
-
                   const SizedBox(height: 60),
-
-                  // Submit Button - WARNA BERUBAH BERDASARKAN STATUS FORM
                   SizedBox(
                     width: double.infinity,
                     child: ElevatedButton(
                       onPressed: _submitForm,
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: _isFormComplete 
-                            ? const Color(0xFF2196F3)  // Biru jika lengkap
-                            : Colors.grey[400],         // Abu-abu jika belum lengkap
+                        backgroundColor: _isFormComplete
+                            ? const Color(0xFF2196F3)
+                            : Colors.grey[400],
                         padding: const EdgeInsets.symmetric(vertical: 16),
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(12),
@@ -513,10 +512,9 @@ class ResultPage extends StatelessWidget {
           padding: const EdgeInsets.all(24.0),
           child: Column(
             children: [
-              // Title dengan Image
               Center(
                 child: Image.asset(
-                  'assets/images/result.png',
+                  'assets/result.png',
                   height: 60,
                   fit: BoxFit.contain,
                   errorBuilder: (context, error, stackTrace) {
@@ -531,10 +529,7 @@ class ResultPage extends StatelessWidget {
                   },
                 ),
               ),
-
               const SizedBox(height: 60),
-
-              // Result Items
               _buildResultItem('Nama Anak', nama),
               const SizedBox(height: 24),
               _buildResultItem('Berat Badan', '$berat Kg'),
@@ -546,27 +541,18 @@ class ResultPage extends StatelessWidget {
               _buildResultItemWithIndicator('Status Gizi', statusGizi),
               const SizedBox(height: 24),
               _buildResultItemWithIndicator('Risiko Stunting', risikoStunting),
-
               const Spacer(),
-
-              // Button - Navigate ke HomeScreen
               SizedBox(
                 width: double.infinity,
                 child: ElevatedButton(
                   onPressed: () {
-                    // CARA 1: Pakai Navigator.pushAndRemoveUntil dengan widget
                     Navigator.pushAndRemoveUntil(
                       context,
-                      MaterialPageRoute(builder: (context) => const HomeScreen()),
+                      MaterialPageRoute(
+                        builder: (context) => const HomeScreen(),
+                      ),
                       (route) => false,
                     );
-                    
-                    // CARA 2: Pakai named route (kalau udah setup di main.dart)
-                    // Navigator.pushNamedAndRemoveUntil(
-                    //   context,
-                    //   '/home',
-                    //   (route) => false,
-                    // );
                   },
                   style: ElevatedButton.styleFrom(
                     backgroundColor: const Color(0xFF2196F3),
@@ -586,7 +572,6 @@ class ResultPage extends StatelessWidget {
                   ),
                 ),
               ),
-
               const SizedBox(height: 40),
             ],
           ),
